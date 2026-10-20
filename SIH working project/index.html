@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>स्वच्छ Saathi</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <style>
+        body { font-family: 'Plus Jakarta Sans', sans-serif; }
+    </style>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body class="bg-[#fafbf8] text-gray-800 antialiased selection:bg-emerald-200">
+
+    <!-- NAVBAR -->
+    <nav class="sticky top-0 z-50 bg-white border-b border-gray-100 px-4 md:px-8 py-3 flex items-center justify-between shadow-sm">
+        <div class="flex items-center gap-2">
+            <div class="bg-emerald-600 text-white p-1.5 rounded-lg">
+                <i data-lucide="leaf" class="w-5 h-5"></i>
+            </div>
+            <span class="font-extrabold text-xl tracking-tight text-emerald-950">स्वच्छ <span class="text-emerald-600">Saathi</span></span>
+        </div>
+
+        <div class="hidden md:flex items-center gap-6 text-sm font-medium text-gray-600">
+            <a href="#home" data-i18n="nav.home" class="hover:text-emerald-700 transition">Home</a>
+            <a href="#my-area" data-i18n="nav.area" class="hover:text-emerald-700 transition">My Area</a>
+            <a href="#stories" data-i18n="nav.stories" class="hover:text-emerald-700 transition">Stories</a>
+            <a href="#how-it-works" data-i18n="nav.how" class="hover:text-emerald-700 transition">How It Works</a>
+            <a href="#my-reports" data-i18n="nav.reports" class="hover:text-emerald-700 transition">My Reports</a>
+        </div>
+
+        <div class="flex items-center gap-3">
+            <button class="text-xs font-semibold px-2 py-1 bg-gray-100 rounded text-gray-700">हिंदी</button>
+            <button data-auth="login" class="text-xs font-semibold px-3 py-1.5 text-emerald-800 hover:bg-emerald-50 rounded-md transition">LOGIN</button>
+            <button data-auth="signup" class="text-xs font-semibold px-3.5 py-1.5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-md transition shadow-sm">SIGN UP</button>
+            <button id="menu-toggle" class="md:hidden rounded-md p-1.5 text-emerald-900 hover:bg-emerald-50" aria-label="Open navigation menu" aria-expanded="false"><i data-lucide="menu" class="w-5 h-5"></i></button>
+        </div>
+    </nav>
+    <div id="mobile-menu" class="hidden border-b border-gray-100 bg-white px-4 py-3 text-sm font-medium text-gray-700 md:hidden">
+        <a href="#home" class="mobile-navigation block py-2">Home</a><a href="#my-area" class="mobile-navigation block py-2">My Area</a><a href="#stories" class="mobile-navigation block py-2">Stories</a><a href="#how-it-works" class="mobile-navigation block py-2">How It Works</a><a href="#my-reports" class="mobile-navigation block py-2">My Reports</a>
+    </div>
+
+    <!-- HERO SECTION -->
+    <section class="max-w-6xl mx-auto px-4 py-12 md:py-16 grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <div class="space-y-6">
+            <div class="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 text-emerald-800 text-xs font-semibold rounded-full">
+                <span>🇮🇳 भारत की हर गली · हर गाँव · हर शहर</span>
+            </div>
+            <h1 class="text-4xl md:text-5xl font-extrabold text-emerald-950 leading-tight">
+                मेरा गाँव,<br/>मेरा घर.
+            </h1>
+            <p class="text-xs font-bold text-emerald-800 uppercase tracking-wide">
+                “मेरा घर, मेरी गली, मेरा गाँव — मेरी जिम्मेदारी ❤️”
+            </p>
+            <p class="text-sm text-gray-600 leading-relaxed max-w-lg">
+                घर को हम रोज़ साफ रखते हैं क्योंकि वह अपना है। स्वच्छSaathi उसी अपनापन को आपकी गली, गाँव, वार्ड और शहर तक ले जाता है — ताकि सफाई सिर्फ व्यवस्था नहीं, हमारी आदत और हमारा गर्व बने।
+            </p>
+            <div class="flex flex-wrap items-center gap-3 pt-2">
+                <button class="bg-emerald-700 hover:bg-emerald-800 text-white px-5 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 shadow-sm transition">
+                    <i data-lucide="trash-2" class="w-4 h-4"></i> कूड़ा बताएं
+                </button>
+                <button class="bg-white border border-gray-200 hover:bg-gray-50 text-emerald-900 px-5 py-2.5 rounded-lg text-sm font-semibold flex items-center gap-2 transition">
+                    <i data-lucide="map-pin" class="w-4 h-4 text-red-500"></i> मेरा इलाका देखें
+                </button>
+            </div>
+            <p class="text-xs text-gray-500 pt-1">
+                👥 <span class="font-semibold text-gray-700">आप जैसे 128 लोग</span> अपने इलाके की सफाई में शामिल हैं
+            </p>
+        </div>
+
+        <div class="relative">
+            <div class="rounded-2xl overflow-hidden shadow-lg border border-gray-100 bg-gray-100 aspect-[4/3]">
+                <img src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&q=80&w=800" alt="Cleanliness campaign" class="w-full h-full object-cover"/>
+            </div>
+            <div class="absolute top-4 right-4 bg-white/90 backdrop-blur-sm text-xs font-semibold px-3 py-1.5 rounded-full shadow-sm text-emerald-900">
+                🌱 गाँव की भागीदारी +128
+            </div>
+            <div class="absolute bottom-4 left-4 right-4 bg-white/90 backdrop-blur-sm p-3 rounded-xl shadow-md flex items-center justify-between text-xs">
+                <span class="font-medium text-gray-800">📍 हमारा इलाका 91% साफ</span>
+                <span class="text-emerald-700 font-bold">Good</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- QUICK ACTIONS -->
+    <section class="max-w-6xl mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <span class="text-xs font-bold text-emerald-800 tracking-wider uppercase">पहले इंसान · फिर तकनीक</span>
+            <h2 class="text-2xl font-extrabold text-emerald-950 mt-1">आपके गाँव का अपना डिजिटल साथी</h2>
+            <p class="text-xs text-gray-500 mt-1">बड़े शब्द नहीं। बड़े बटन, अपनी भाषा और आसान काम — ताकि बच्चे, बुजुर्ग, किसान, दुकानदार और शहर का नागरिक सब जुड़ सकें।</p>
+        </div>
+
+        <div class="grid grid-cols-2 md:grid-cols-5 gap-4">
+            <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition text-center flex flex-col items-center">
+                <div class="w-10 h-10 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-2"><i data-lucide="camera" class="w-5 h-5"></i></div>
+                <h3 class="text-xs font-bold text-gray-800">कूड़ा बताएं</h3>
+                <p class="text-[10px] text-gray-500 mt-1">फोटो + लोकेशन भेजें और अपने इलाके की मदद करें</p>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition text-center flex flex-col items-center">
+                <div class="w-10 h-10 rounded-full bg-red-50 text-red-500 flex items-center justify-center mb-2"><i data-lucide="map-pin" class="w-5 h-5"></i></div>
+                <h3 class="text-xs font-bold text-gray-800">पास का डस्टबिन</h3>
+                <p class="text-[10px] text-gray-500 mt-1">नज़दीकी smart bins और collection points देखें</p>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition text-center flex flex-col items-center">
+                <div class="w-10 h-10 rounded-full bg-amber-50 text-amber-600 flex items-center justify-center mb-2"><i data-lucide="broom" class="w-5 h-5"></i></div>
+                <h3 class="text-xs font-bold text-gray-800">सफाई बुलाएं</h3>
+                <p class="text-[10px] text-gray-500 mt-1">गली, नाली या public place की सफाई request करें</p>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition text-center flex flex-col items-center">
+                <div class="w-10 h-10 rounded-full bg-blue-50 text-blue-600 flex items-center justify-center mb-2"><i data-lucide="clipboard-list" class="w-5 h-5"></i></div>
+                <h3 class="text-xs font-bold text-gray-800">मेरी शिकायतें</h3>
+                <p class="text-[10px] text-gray-500 mt-1">अपनी reports का status और समाधान देखें</p>
+            </div>
+            <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm hover:shadow-md transition text-center flex flex-col items-center col-span-2 md:col-span-1">
+                <div class="w-10 h-10 rounded-full bg-rose-50 text-rose-500 flex items-center justify-center mb-2"><i data-lucide="heart" class="w-5 h-5"></i></div>
+                <h3 class="text-xs font-bold text-gray-800">मेरा इलाका</h3>
+                <p class="text-[10px] text-gray-500 mt-1">अपने गाँव / वार्ड का cleanliness score देखें</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- DASHBOARD STATS & MAP SECTION -->
+    <section class="bg-[#0b2b1a] text-white py-12 my-8">
+        <div class="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+            <div class="md:col-span-5 space-y-6">
+                <span class="text-xs font-semibold text-emerald-400 tracking-wider">MY AREA · मेरा गाँव</span>
+                <h2 class="text-3xl font-extrabold leading-snug">गाँव साफ होता है जब लोग उसे अपना समझते हैं।</h2>
+                <p class="text-xs text-emerald-100/80 leading-relaxed">
+                    Rural में Village → Ward → Panchayat और Urban में City → Ward → Zone के हिसाब से platform ढल सकता है।
+                </p>
+                <div class="pt-2">
+                    <span class="text-4xl font-extrabold text-white">91</span>
+                    <span class="text-xs text-emerald-300 font-medium">/100 Cleanliness Score ❤️</span>
+                </div>
+
+                <div class="grid grid-cols-2 gap-3 pt-2">
+                    <div class="bg-emerald-900/50 border border-emerald-800 p-3 rounded-lg">
+                        <div class="text-xl font-bold">24</div>
+                        <div class="text-[11px] text-emerald-200">सक्रिय डस्टबिन</div>
+                    </div>
+                    <div class="bg-emerald-900/50 border border-emerald-800 p-3 rounded-lg">
+                        <div class="text-xl font-bold">17</div>
+                        <div class="text-[11px] text-emerald-200">आज के collection</div>
+                    </div>
+                    <div class="bg-emerald-900/50 border border-emerald-800 p-3 rounded-lg">
+                        <div class="text-xl font-bold">08</div>
+                        <div class="text-[11px] text-emerald-200">सफाई साथी</div>
+                    </div>
+                    <div class="bg-emerald-900/50 border border-emerald-800 p-3 rounded-lg">
+                        <div class="text-xl font-bold">96%</div>
+                        <div class="text-[11px] text-emerald-200">report resolution</div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="md:col-span-7">
+                <div class="bg-[#d9ebd7] rounded-2xl p-6 h-80 relative flex items-center justify-center border border-emerald-700/30">
+                    <p class="text-xs font-bold text-emerald-900 absolute top-4 left-4 bg-white/80 px-3 py-1 rounded-full">Interactive Area Map</p>
+                    <div class="space-y-4 text-center">
+                        <div class="flex justify-center gap-6">
+                            <span class="w-8 h-8 rounded-full bg-emerald-600 text-white flex items-center justify-center shadow"><i data-lucide="trash-2" class="w-4 h-4"></i></span>
+                            <span class="w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center shadow"><i data-lucide="alert-triangle" class="w-4 h-4"></i></span>
+                            <span class="w-8 h-8 rounded-full bg-red-500 text-white flex items-center justify-center shadow"><i data-lucide="map-pin" class="w-4 h-4"></i></span>
+                        </div>
+                        <span class="text-xs text-emerald-950 font-semibold block">Live Bins & Waste Reports Tracking</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CLEANLINESS STORIES -->
+    <section class="max-w-6xl mx-auto px-4 py-12">
+        <div class="text-center mb-8">
+            <span class="text-xs font-bold text-emerald-800 tracking-wider uppercase">CLEANLINESS STORIES</span>
+            <h2 class="text-2xl font-extrabold text-emerald-950 mt-1">सिर्फ सफाई नहीं — गर्व की कहानी</h2>
+            <p class="text-xs text-gray-500 mt-1">Before/after stories और community achievements लोगों को shame नहीं, pride से जोड़ते हैं।</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition">
+                <div class="h-44 bg-gray-200 relative">
+                    <img src="https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&q=80&w=600" alt="Community Drive" class="w-full h-full object-cover"/>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-bold text-sm text-gray-800">गली ने मिलकर बदली तस्वीर ❤️</h3>
+                    <p class="text-xs text-gray-500 mt-1">Community cleanliness drive की सफलता की यह कहानी।</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition">
+                <div class="h-44 bg-gray-200 relative">
+                    <img src="https://images.unsplash.com/photo-1488521787991-ed7bbaae773c?auto=format&fit=crop&q=80&w=600" alt="Village Pride" class="w-full h-full object-cover"/>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-bold text-sm text-gray-800">हमारा गाँव, हमारी पहचान 🌱</h3>
+                    <p class="text-xs text-gray-500 mt-1">Local progress को celebrate करो।</p>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-md transition">
+                <div class="h-44 bg-gray-200 relative">
+                    <img src="https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&q=80&w=600" alt="Smart Bin" class="w-full h-full object-cover"/>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-bold text-sm text-gray-800">Smart Bin + Smart सोच 🤖</h3>
+                    <p class="text-xs text-gray-500 mt-1">Live fill-level data से सही समय पर collection।</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- TECH BEHIND SCENE -->
+    <section class="max-w-6xl mx-auto px-4 py-8">
+        <div class="text-center mb-8">
+            <span class="text-xs font-bold text-emerald-800 tracking-wider uppercase">TECHNOLOGY BEHIND THE SCENE</span>
+            <h2 class="text-2xl font-extrabold text-emerald-950 mt-1">तकनीक पीछे रहे, अपनापन आगे</h2>
+            <p class="text-xs text-gray-500 mt-1">AI और IoT complex काम संभालें, नागरिक को सिर्फ आसान experience मिले।</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-start gap-3">
+                <div class="p-2 bg-emerald-50 text-emerald-600 rounded-lg"><i data-lucide="bot" class="w-5 h-5"></i></div>
+                <div>
+                    <h3 class="text-xs font-bold text-gray-800">AI Waste Detection</h3>
+                    <p class="text-[11px] text-gray-500 mt-0.5">Photo-based plastic, paper, metal, food and general waste classification.</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-start gap-3">
+                <div class="p-2 bg-blue-50 text-blue-600 rounded-lg"><i data-lucide="cpu" class="w-5 h-5"></i></div>
+                <div>
+                    <h3 class="text-xs font-bold text-gray-800">IoT Smart Bins</h3>
+                    <p class="text-[11px] text-gray-500 mt-0.5">ESP32 + ultrasonic sensor based fill-level monitoring and alerts.</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-start gap-3">
+                <div class="p-2 bg-amber-50 text-amber-600 rounded-lg"><i data-lucide="navigation" class="w-5 h-5"></i></div>
+                <div>
+                    <h3 class="text-xs font-bold text-gray-800">Worker Navigation</h3>
+                    <p class="text-[11px] text-gray-500 mt-0.5">Assigned tasks, priority, location and completion proof.</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-start gap-3">
+                <div class="p-2 bg-purple-50 text-purple-600 rounded-lg"><i data-lucide="mic" class="w-5 h-5"></i></div>
+                <div>
+                    <h3 class="text-xs font-bold text-gray-800">बोलकर बताएं</h3>
+                    <p class="text-[11px] text-gray-500 mt-0.5">Voice-to-report flow for people who prefer speaking over typing.</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-start gap-3">
+                <div class="p-2 bg-amber-50 text-amber-600 rounded-lg"><i data-lucide="trophy" class="w-5 h-5"></i></div>
+                <div>
+                    <h3 class="text-xs font-bold text-gray-800">हमारा गाँव Challenge</h3>
+                    <p class="text-[11px] text-gray-500 mt-0.5">Friendly cleanliness score and badges — shame नहीं, pride.</p>
+                </div>
+            </div>
+
+            <div class="bg-white p-4 rounded-xl border border-gray-100 shadow-sm flex items-start gap-3">
+                <div class="p-2 bg-teal-50 text-teal-600 rounded-lg"><i data-lucide="globe" class="w-5 h-5"></i></div>
+                <div>
+                    <h3 class="text-xs font-bold text-gray-800">Rural + Urban</h3>
+                    <p class="text-[11px] text-gray-500 mt-0.5">One platform with adaptive local governance flows.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- QUOTE BANNER -->
+    <section class="max-w-4xl mx-auto px-4 my-8">
+        <div class="bg-emerald-50 border border-emerald-100 text-emerald-950 p-6 rounded-2xl text-center">
+            <p class="text-sm md:text-base font-bold leading-relaxed">
+                “हम दूसरा garbage-reporting app नहीं बना रहे। हम ऐसा digital community बना रहे हैं जहाँ लोगों को लगे — यह मेरा गाँव है, इसलिए इसकी सफाई मेरी भी जिम्मेदारी है।”
+            </p>
+        </div>
+    </section>
+
+    <!-- CTA BANNER -->
+    <section class="max-w-6xl mx-auto px-4 my-10">
+        <div class="bg-emerald-800 text-white rounded-2xl p-8 text-center space-y-4">
+            <h2 class="text-xl md:text-2xl font-extrabold">
+                घर से गली तक ➔ गली से गाँव तक ➔ गाँव से भारत तक 🇮🇳
+            </h2>
+            <p class="text-xs text-emerald-100">एक छोटी report, एक साफ गली, एक proud community.</p>
+            <button class="bg-white text-emerald-900 text-xs font-bold px-5 py-2.5 rounded-lg hover:bg-emerald-50 transition shadow-sm">
+                ❤️ अपने गाँव की मदद करें
+            </button>
+        </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="bg-[#071d12] text-white pt-10 pb-6 text-xs">
+        <div class="max-w-6xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8 pb-8 border-b border-emerald-900/60">
+            <div>
+                <div class="flex items-center gap-2 mb-2">
+                    <div class="bg-emerald-600 p-1 rounded"><i data-lucide="leaf" class="w-4 h-4 text-white"></i></div>
+                    <span class="font-extrabold text-base">स्वच्छ Saathi</span>
+                </div>
+                <p class="text-emerald-300/80 text-[11px]">मेरा गाँव, मेरा घर — स्वच्छ गाँव, स्वच्छ परिवार।</p>
+                <p class="text-emerald-400/60 text-[10px] mt-2">Community-first smart waste management & sanitation</p>
+                <a href="mailto:dixitn793@gmail.com?subject=Citizen%20report%20support%20request" class="mt-4 inline-flex items-center gap-2 rounded-lg border border-emerald-700/60 bg-emerald-900/60 px-3 py-2 text-[11px] font-semibold text-emerald-100 hover:bg-emerald-800 hover:text-white transition">
+                    <i data-lucide="mail" class="w-3.5 h-3.5"></i><span>Facing a problem? Contact Admin</span>
+                </a>
+                <p class="mt-1.5 text-[10px] text-emerald-400/70">dixitn793@gmail.com</p>
+            </div>
+
+            <div>
+                <h4 class="font-bold text-emerald-200 mb-2">Citizen</h4>
+                <ul class="space-y-1.5 text-emerald-300/70 text-[11px]">
+                    <li><a href="#" class="hover:underline">कूड़ा बताएं</a></li>
+                    <li><a href="#" class="hover:underline">कांश डस्टबिन</a></li>
+                    <li><a href="#" class="hover:underline">मेरी शिकायतें</a></li>
+                    <li><a href="#" class="hover:underline">सफाई Stories</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="font-bold text-emerald-200 mb-2">Prototype</h4>
+                <ul class="space-y-1.5 text-emerald-300/70 text-[11px]">
+                    <li><a href="#" class="hover:underline">Worker Dashboard</a></li>
+                     <li><a href="admin/" class="hover:underline">Admin Dashboard</a></li>
+                    <li><a href="#" class="hover:underline">Smart Bin Live</a></li>
+                    <li><a href="#" class="hover:underline">Waste Segregation</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="max-w-6xl mx-auto px-4 pt-4 flex flex-col md:flex-row justify-between items-center text-[10px] text-emerald-400/60">
+            <p></p>
+            <a href="https://www.linkedin.com/in/nikhil-dixit-8683b7293/" target="_blank" rel="noopener noreferrer" class="mt-2 md:mt-0 inline-flex items-center gap-1.5 rounded border border-emerald-700/50 bg-emerald-900/80 px-2 py-1 text-emerald-100 hover:bg-emerald-800 hover:text-white transition" aria-label="Contact Nikhil Dixit on LinkedIn for website development">
+                <i data-lucide="linkedin" class="w-3.5 h-3.5"></i> Need a website? Connect with Nikhil Dixit
+            </a>
+        </div>
+    </footer>
+
+    <!-- Initialize Lucide Icons -->
+    <script>        
+        lucide.createIcons();
+    </script>
+    <script src="translations.js"></script>
+    <script src="app.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="map.js"></script>
+    <script src="feature-cards.js"></script>
+</body>
+</html>
